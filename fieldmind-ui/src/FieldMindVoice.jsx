@@ -1,7 +1,37 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createEngine } from "./engine/fieldmind.js";
 
-const API_BASE = "http://localhost:8000";
-const WS_URL   = "ws://localhost:8000/ws/ask";
+// Two ways to run:
+//   in-browser (default, GitHub Pages)  the manual search + sentence picker run
+//                                       here, with transformers.js; no server
+//   server                              set VITE_API_BASE=http://localhost:8000
+//                                       to use the Python FastAPI backend
+const API_BASE = import.meta.env.VITE_API_BASE || "";
+const WS_URL   = API_BASE.replace(/^http/, "ws") + "/ws/ask";
+const IN_BROWSER = !API_BASE;
+const DATA_URL = `${import.meta.env.BASE_URL}data/`;
+
+async function loadBrowserEngine(onProgress) {
+  const [{ loadModels }, chunksRes, embRes] = await Promise.all([
+    import("./engine/models.js"),
+    fetch(`${DATA_URL}chunks.json`),
+    fetch(`${DATA_URL}embeddings.bin`),
+  ]);
+  if (!chunksRes.ok || !embRes.ok) throw new Error("index files missing");
+  const { meta, chunks } = await chunksRes.json();
+  const embeddings = new Float32Array(await embRes.arrayBuffer());
+  const models = await loadModels({ onProgress });
+  const engine = createEngine({ chunks, embeddings, meta, ...models });
+  await engine.ask("how often should pump bearings be checked");  // warm up WASM (first run ~7 s)
+  return engine;
+}
+
+const EXAMPLES = [
+  "how often do the pump bearings need lubricating",
+  "should I start the centrifugal pump with the discharge valves closed",
+  "why does the fluid boil inside the pump",
+  "how can I tell if a pump is oversized",
+];
 
 // ── Global styles ────────────────────────────────────────────────────────────
 const STYLES = `
@@ -215,6 +245,31 @@ canvas.wave{width:100%;height:100%;}
   color:var(--muted);cursor:pointer;
 }
 .clr-btn:hover{color:var(--red);}
+
+/* sources + examples */
+.src{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:4px;line-height:1.6;}
+.src b{color:var(--blue);font-weight:500;}
+.examples{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;max-width:560px;margin-top:8px;}
+.ex-btn{
+  background:var(--s2);border:1px solid var(--border);border-radius:99px;
+  color:var(--text);font-family:var(--sans);font-size:12px;padding:6px 12px;cursor:pointer;
+}
+.ex-btn:hover:not(:disabled){border-color:var(--green);color:var(--green);}
+.ex-btn:disabled{opacity:.4;cursor:not-allowed;}
+.load-bar{width:220px;height:3px;border-radius:2px;background:var(--border);overflow:hidden;}
+.load-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .3s;}
+.note{font-size:10px;max-width:420px;text-align:center;line-height:1.6;}
+
+/* phones and narrow windows: conversation only */
+@media (max-width: 900px){
+  .shell{grid-template-columns:1fr;}
+  .left,.right{display:none;}
+  .msg{max-width:92%;}
+  .conv{padding:16px;}
+  .ibar{padding:10px 12px;}
+  .topbar{padding:0 14px;gap:10px;}
+  .pill.model{display:none;}
+}
 `;
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -224,19 +279,6 @@ const hms  = () => new Date().toLocaleTimeString("en-GB",{hour12:false});
 const pad2 = n => String(n).padStart(2,"0");
 const fmt  = s => `${pad2(Math.floor(s/3600))}:${pad2(Math.floor(s%3600/60))}:${pad2(s%60)}`;
 
-// Web Speech synthesis — speak text in browser (zero latency, no round-trip)
-function browserSpeak(text, rate = 0.92) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.rate = rate;
-  u.pitch = 1.0;
-  u.volume = 1.0;
-  const voices = window.speechSynthesis.getVoices();
-  const voice = voices.find(v => v.lang === "en-US" && v.localService);
-  if (voice) u.voice = voice;
-  window.speechSynthesis.speak(u);
-}
 function cancelSpeak() {
   window.speechSynthesis?.cancel();
 }
@@ -251,7 +293,6 @@ export default function FieldMind() {
   const [busy,      setBusy]      = useState(false);
   const [micState,  setMicState]  = useState("idle");  // idle | listening | speaking
   const [stats,     setStats]     = useState({q:0, esc:0, lats:[], avg:"0.00"});
-  const [vadActive, setVadActive] = useState(false);
 
   const wsRef        = useRef(null);
   const convRef      = useRef(null);
@@ -262,14 +303,42 @@ export default function FieldMind() {
   const mediaRef     = useRef(null);
   const recognRef    = useRef(null);
   const t0Ref        = useRef(null);
+  const engineRef    = useRef(null);
+  const stopRef      = useRef(false);
+  const [loadPct,   setLoadPct]   = useState(0);
 
   // ── log ──
   const log = useCallback((m, t="d") => {
     setLogs(p => [...p.slice(-249), {id:uid(), time:hms(), m, t}]);
   }, []);
 
-  // ── health ──
+  // ── in-browser engine: load index + models once ──
   useEffect(() => {
+    if (!IN_BROWSER) return;
+    let cancelled = false;
+    const files = new Map();
+    loadBrowserEngine(p => {
+      if (p.status === "progress" && p.total) {
+        files.set(p.file + p.name, [p.loaded, p.total]);
+        let l = 0, t = 0;
+        for (const [a, b] of files.values()) { l += a; t += b; }
+        setLoadPct(Math.round((l / t) * 100));
+      }
+    }).then(engine => {
+      if (cancelled) return;
+      engineRef.current = engine;
+      setHealth("online"); setLoadPct(100);
+      log("Engine ready — runs in this browser","g");
+    }).catch(e => {
+      if (cancelled) return;
+      setHealth("error"); log(`Engine failed to load: ${e.message}`,"r");
+    });
+    return () => { cancelled = true; };
+  }, [log]);
+
+  // ── health (server mode) ──
+  useEffect(() => {
+    if (IN_BROWSER) return;
     const check = async () => {
       try {
         await fetch(`${API_BASE}/health`);
@@ -327,7 +396,7 @@ export default function FieldMind() {
         });
       };
       draw();
-    } catch(e) { log("Mic access denied","r"); }
+    } catch { log("Mic access denied","r"); }
   }, [log]);
 
   const stopVisualizer = useCallback(() => {
@@ -354,6 +423,51 @@ export default function FieldMind() {
     setBusy(true);
     setMicState("idle");
     t0Ref.current = Date.now();
+
+    const finish = (escalate) => {
+      const lat = ((Date.now()-t0Ref.current)/1000).toFixed(2);
+      setStats(p => {
+        const nl = [...p.lats, parseFloat(lat)].slice(-20);
+        const avg = (nl.reduce((a,b)=>a+b,0)/nl.length).toFixed(2);
+        return {q:p.q+1, esc:p.esc+(escalate?1:0), lats:nl, avg};
+      });
+      if (escalate) log("⚠ ESCALATE — specialist required","r");
+      log(`Done in ${lat}s`, "g");
+      setBusy(false);
+    };
+
+    if (IN_BROWSER) {
+      const engine = engineRef.current;
+      if (!engine) {
+        setMsgs(p => p.map(m => m.id===aid ? {...m, text:"Still loading the models — try again in a moment.", streaming:false} : m));
+        setBusy(false);
+        return;
+      }
+      stopRef.current = false;
+      engine.ask(question).then(r => {
+        if (stopRef.current) return;
+        const text = r.sentences.join(" ");
+        setMsgs(p => p.map(m => m.id===aid
+          ? {...m, text, streaming:false, escalate:r.escalate, sources:r.reason==="ok" ? r.sources.slice(0,2) : []} : m));
+        log(`${r.reason} · ${r.latencyMs} ms`, r.reason==="ok" ? "d" : "a");
+        if (text && window.speechSynthesis) {
+          setMicState("speaking");
+          const u = new SpeechSynthesisUtterance(text);
+          u.rate = 0.92;
+          const voice = window.speechSynthesis.getVoices().find(v => v.lang === "en-US" && v.localService);
+          if (voice) u.voice = voice;
+          u.onend = () => setMicState("idle");
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.speak(u);
+        }
+        finish(r.escalate);
+      }).catch(e => {
+        log(`Engine error: ${e.message}`,"r");
+        setMsgs(p => p.map(m => m.id===aid ? {...m, text:"Something went wrong answering that.", streaming:false, escalate:true} : m));
+        setBusy(false);
+      });
+      return;
+    }
 
     const connect = () => {
       const ws = new WebSocket(WS_URL);
@@ -384,17 +498,9 @@ export default function FieldMind() {
           log(`TTS: "${data.sentence.slice(0,40)}…"`, "d");
         }
         else if (data.type === "done") {
-          const lat = ((Date.now()-t0Ref.current)/1000).toFixed(2);
           setMsgs(p => p.map(m => m.id===aid
-            ? {...m, streaming:false, escalate:data.escalate} : m));
-          setStats(p => {
-            const nl = [...p.lats, parseFloat(lat)].slice(-20);
-            const avg = (nl.reduce((a,b)=>a+b,0)/nl.length).toFixed(2);
-            return {q:p.q+1, esc:p.esc+(data.escalate?1:0), lats:nl, avg};
-          });
-          if (data.escalate) log("⚠ ESCALATE — specialist required","r");
-          log(`Done in ${lat}s`, "g");
-          setBusy(false);
+            ? {...m, streaming:false, escalate:data.escalate, sources:(data.sources||[]).slice(0,2)} : m));
+          finish(data.escalate);
           setMicState("idle");
         }
       };
@@ -476,10 +582,10 @@ export default function FieldMind() {
           <div className="logo">Field<em>Mind</em></div>
           <div className="pill">
             <div className={`dot ${health==="online"?"on":health==="error"?"err":""}`}/>
-            {health==="online"?"ONLINE":health==="error"?"OFFLINE":"INIT"}
+            {health==="online"?"ONLINE":health==="error"?"OFFLINE":IN_BROWSER?`LOADING ${loadPct}%`:"INIT"}
           </div>
-          <div className="pill" style={{color:"var(--blue)",borderColor:"#38b6ff30"}}>
-            ⚡ fieldmind · mistral-7b-lora
+          <div className="pill model" style={{color:"var(--blue)",borderColor:"#38b6ff30"}}>
+            ⚡ {IN_BROWSER ? "in-browser · reads the manual verbatim" : "fieldmind · server"}
           </div>
           <div className="topbar-right">
             <span className="mono-sm">⏱ {fmt(uptime)}</span>
@@ -510,22 +616,22 @@ export default function FieldMind() {
           <div>
             <div className="panel-title">Stack</div>
             <div className="info-block">
-              <span className="on">●</span> Ollama · fieldmind<br/>
-              <span className="on">●</span> ChromaDB · about<br/>
-              <span className="on">●</span> MiniLM-L6 RAG<br/>
+              <span className="on">●</span> Hybrid search · MiniLM + BM25<br/>
+              <span className="on">●</span> Reranker · ms-marco MiniLM<br/>
+              <span className="on">●</span> Guardrails · refuse off-topic<br/>
               <span className="bl">●</span> Web Speech STT<br/>
               <span className="bl">●</span> SpeechSynthesis TTS<br/>
             </div>
           </div>
 
           <div>
-            <div className="panel-title">Optimizations</div>
+            <div className="panel-title">Knowledge</div>
             <div className="info-block">
-              VAD endpoint<br/>
-              beam_size=1<br/>
-              threaded TTS<br/>
-              sentence streaming<br/>
-              browser-native voice
+              US DOE pumping<br/>
+              system sourcebook<br/>
+              answers read out<br/>
+              verbatim + cited<br/>
+              {IN_BROWSER ? "no server, no LLM" : "Python backend"}
             </div>
           </div>
         </aside>
@@ -550,8 +656,21 @@ export default function FieldMind() {
             {msgs.length===0 && (
               <div className="empty-state">
                 <div className="empty-icon">⚡</div>
-                <div>FieldMind standing by</div>
-                <div style={{fontSize:10}}>press mic or type a question</div>
+                <div>{health==="online" ? "FieldMind standing by" : health==="error" ? "FieldMind could not start" : "Loading FieldMind…"}</div>
+                {IN_BROWSER && health!=="online" && health!=="error" && (
+                  <>
+                    <div className="load-bar"><div className="load-fill" style={{width:`${loadPct}%`}}/></div>
+                    <div className="note">First visit downloads ~110 MB of models, then they are cached. Everything runs in your browser.</div>
+                  </>
+                )}
+                {health==="online" && <>
+                  <div style={{fontSize:10}}>press mic or type a question about pump maintenance</div>
+                  <div className="examples">
+                    {EXAMPLES.map(q => (
+                      <button key={q} className="ex-btn" disabled={busy} onClick={() => sendQuestion(q)}>{q}</button>
+                    ))}
+                  </div>
+                </>}
               </div>
             )}
             {msgs.map(m => (
@@ -563,6 +682,9 @@ export default function FieldMind() {
                 <div className="bubble">
                   {m.text}
                   {m.streaming && <span className="cursor"/>}
+                  {m.sources?.length > 0 && (
+                    <div className="src">{m.sources.map((s, i) => <div key={i}><b>§</b> {s}</div>)}</div>
+                  )}
                 </div>
               </div>
             ))}
@@ -605,6 +727,7 @@ export default function FieldMind() {
                   letterSpacing: 1,
                 }}
                 onClick={() => {
+                  stopRef.current = true;
                   if (wsRef.current) {
                     wsRef.current.onmessage = null;
                     wsRef.current.close();
