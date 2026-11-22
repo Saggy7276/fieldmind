@@ -1,0 +1,27 @@
+# FieldMind Python side: indexing, evaluation, tests and the offline voice server.
+# Versions are the ones tested (Python 3, Windows). Install with:
+#   python -m pip install -r requirements.txt
+# The web app (fieldmind-ui/) has its own dependencies in package.json.
+
+# Retrieval and answering
+chromadb==1.5.9
+sentence-transformers==5.5.1   # MiniLM embedder + ms-marco cross-encoder
+torch==2.12.0
+numpy==2.4.6
+pypdf==7.1.1                   # reading the manual PDF when building the index
+
+# Optional generative mode / LLM selector (needs a running Ollama)
+ollama==0.6.2
+
+# Voice server (fieldmind_optimized.py)
+fastapi==0.136.3
+uvicorn==0.48.0
+websockets==16.0
+pydantic==2.13.4
+faster-whisper==1.2.1          # speech to text
+webrtcvad-wheels==2.0.14       # voice activity detection
+sounddevice==0.5.5             # microphone
+pyttsx3==2.99                  # text to speech
+
+# Tests
+pytest==9.2.0

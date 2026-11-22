@@ -31,6 +31,8 @@ Why it reads sentences instead of letting an LLM write answers:
 | Python server (`fieldmind_optimized.py`) | your machine, fully offline | Python, models, optional Ollama |
 
 ```bash
+# Python side
+python -m pip install -r requirements.txt
 # web app
 cd fieldmind-ui && npm install && npm run dev
 # point it at the Python server instead of the in-browser engine:
