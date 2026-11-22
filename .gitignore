@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# virtual environment (recreate it; ~1.4 GB)
+voicebot/
+.venv/
+venv/
+
+# LLM weights (4.4 GB) - download separately, see Modelfile
+*.gguf
+
+# generated: rebuild with `python build_index.py`
+rag_db/
+
+# runtime traces (contain question/answer text)
+logs/
+
+# front-end dependencies
+node_modules/
+
+# editors / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

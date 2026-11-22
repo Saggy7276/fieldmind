@@ -1,0 +1,5 @@
+My name is Sagar. I am a Computer Vision and Machine Learning Engineer based in Germany.
+I hold an M.Sc. in Smart Systems from Hochschule Furtwangen University, completed in 2024.
+I built FieldMind, an air-gapped AI voice assistant for field operators.
+My core skills are Python, deep learning, YOLO object detection, and RAG systems.
+I previously worked as a Project Engineer in industrial automation in India.

@@ -1,0 +1,5 @@
+Sagar is a Computer Vision and Machine Learning Engineer based in Germany.
+Sagar studied Smart Systems at Hochschule Furtwangen University, graduating with an M.Sc. in 2024.
+Sagar built FieldMind, an air-gapped AI voice assistant that answers field operators' questions from equipment manuals.
+Sagar's core skills are Python, deep learning, YOLO object detection, and RAG systems.
+Sagar previously worked as a Project Engineer in industrial automation in India.

@@ -1,0 +1,42 @@
+{
+  "_comment": "Spoken-style questions. A retrieved chunk counts as relevant when it contains every phrase in must_contain (case and whitespace insensitive). For the end-to-end run, an answer is correct when it contains at least one alternative from every group in answer_facts and none of must_not (a contradiction of the manual). out_of_scope questions must be refused.",
+  "in_scope": [
+    {"q": "how much leakage is okay on the pump packing", "must_contain": ["60 drops per minute"], "answer_facts": [["60 drops"]]},
+    {"q": "how often do the pump bearings need lubricating", "must_contain": ["lubricated semiannually or annually"], "answer_facts": [["semiannual", "semi-annual", "twice a year", "every six months"]]},
+    {"q": "what happens if I put too much grease in the bearings", "must_contain": ["overgrease bearings", "overheating"], "answer_facts": [["overheat"]]},
+    {"q": "what's the difference between NPSHA and NPSHR", "must_contain": ["NPSHA", "NPSHR", "function of the pump"], "answer_facts": [["available"], ["required"]]},
+    {"q": "how far can we trim down an impeller", "must_contain": ["below 70% of their original size"], "answer_facts": [["70%", "70 percent"]], "must_not": ["up to 2%", "by 2%"]},
+    {"q": "what is a pony pump used for", "must_contain": ["pony pump", "operates during normal conditions"], "answer_facts": [["normal"]]},
+    {"q": "what happens if all the valves after a positive displacement pump are closed", "must_contain": ["deadheading", "relief valve lifts"], "answer_facts": [["relief"]]},
+    {"q": "how do I check the mechanical seal during maintenance", "must_contain": ["Mechanical Seals. Check for leakage", "replace the seal"], "answer_facts": [["seal"], ["leak"]], "must_not": ["packing rings"]},
+    {"q": "how do I check the motor condition", "must_contain": ["integrity of motor winding insulation"], "answer_facts": [["insulation"]]},
+    {"q": "why does running at low flow damage the impeller", "must_contain": ["Internal recirculation tends to occur at low flow rates"], "answer_facts": [["recirculation"]]},
+    {"q": "what is the best efficiency point of a pump", "must_contain": ["best efficiency point (BEP)", "efficiency is highest"], "answer_facts": [["efficiency is highest", "highest efficiency", "efficiency is at its highest", "most efficient", "maximum efficiency"]]},
+    {"q": "should I start the centrifugal pump with the discharge valves closed", "must_contain": ["starting a centrifugal pump while it is deadheaded"], "answer_facts": [["reduce", "lower", "smallest"]], "must_not": ["not recommended", "should not start", "shouldn't start", "avoid starting", "cause electrical stress", "lead to electrical stress", "result in electrical stress"]},
+    {"q": "what's wrong with using a bypass valve to control flow", "must_contain": ["power used to pump the bypassed fluid is wasted"], "answer_facts": [["wasted", "waste"]]},
+    {"q": "what should the piping look like right before the pump inlet", "must_contain": ["straight run of pipe leads into the pump inlet"], "answer_facts": [["straight run"]], "must_not": ["figure 8."]},
+    {"q": "what are wear rings for", "must_contain": ["Wear rings are used in centrifugal pumps to establish clearances"], "answer_facts": [["clearance"]]},
+    {"q": "how can I tell if a pump is oversized", "must_contain": ["five common indications that a pump is oversized"], "answer_facts": [["throttl", "bypass", "noise", "bearing", "seal"]]},
+    {"q": "which type of adjustable speed drive is most common", "must_contain": ["VFDs are by far the most popular type of ASD"], "answer_facts": [["variable frequency drive", "vfd"]]},
+    {"q": "why does the fluid boil inside the pump", "must_contain": ["changing from a liquid to a vapor", "cavitation"], "answer_facts": [["vapor", "vapour"], ["cavitation"]]},
+    {"q": "what is static head", "must_contain": ["Static head is the pressure of the fluid in the system"], "answer_facts": [["pressure"]]},
+    {"q": "what do the affinity laws describe", "must_contain": ["A set of relationships that tie together pump performance characteristics"], "answer_facts": [["relationship", "relate"]]},
+    {"q": "how do I know if a bearing is worn", "must_contain": ["listening for noises that indicate excessive wear"], "answer_facts": [["noise", "listen"]]},
+    {"q": "where did Sagar study", "must_contain": ["Hochschule Furtwangen"], "answer_facts": [["furtwangen"]]},
+    {"q": "what is FieldMind", "must_contain": ["air-gapped AI voice assistant"], "answer_facts": [["air-gapped", "air gapped"], ["voice assistant"]]}
+  ],
+  "out_of_scope": [
+    "what's the weather in Berlin tomorrow",
+    "how do I reset my email password",
+    "who won the last football world cup",
+    "what torque should I use on the gearbox cover bolts",
+    "how do I bake sourdough bread",
+    "what is the boiling point of ammonia",
+    "how do I configure a Siemens S7 PLC",
+    "tell me a joke",
+    "what is the capital of France",
+    "how do I change the oil in my car",
+    "how many vacation days do I have left",
+    "what's the wiring colour code for a three phase motor in Germany"
+  ]
+}

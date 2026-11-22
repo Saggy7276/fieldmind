@@ -1,0 +1,410 @@
+{
+  "rows": [
+    {
+      "strategy": "line",
+      "mode": "dense",
+      "hit@1": 0.13043478260869565,
+      "hit@3": 0.2608695652173913,
+      "mrr@3": 0.18840579710144925,
+      "chunks": 6863,
+      "avg_words": 6.8803730147165965,
+      "max_words": 136,
+      "truncated_pct": 0.0,
+      "ctx_words": 30.782608695652176,
+      "build_s": 16.2,
+      "misses": [
+        "how often do the pump bearings need lubricating",
+        "what's the difference between NPSHA and NPSHR",
+        "how far can we trim down an impeller",
+        "what is a pony pump used for",
+        "what happens if all the valves after a positive displacement pump are closed",
+        "how do I check the mechanical seal during maintenance",
+        "why does running at low flow damage the impeller",
+        "what is the best efficiency point of a pump",
+        "should I start the centrifugal pump with the discharge valves closed",
+        "what's wrong with using a bypass valve to control flow",
+        "what should the piping look like right before the pump inlet",
+        "what are wear rings for",
+        "how can I tell if a pump is oversized",
+        "which type of adjustable speed drive is most common",
+        "why does the fluid boil inside the pump",
+        "what do the affinity laws describe",
+        "where did Sagar study"
+      ]
+    },
+    {
+      "strategy": "line",
+      "mode": "hybrid",
+      "hit@1": 0.13043478260869565,
+      "hit@3": 0.17391304347826086,
+      "mrr@3": 0.15217391304347827,
+      "chunks": 6863,
+      "avg_words": 6.8803730147165965,
+      "max_words": 136,
+      "truncated_pct": 0.0,
+      "ctx_words": 28.608695652173914,
+      "build_s": 16.2,
+      "misses": [
+        "how often do the pump bearings need lubricating",
+        "what's the difference between NPSHA and NPSHR",
+        "how far can we trim down an impeller",
+        "what is a pony pump used for",
+        "what happens if all the valves after a positive displacement pump are closed",
+        "how do I check the mechanical seal during maintenance",
+        "why does running at low flow damage the impeller",
+        "what is the best efficiency point of a pump",
+        "should I start the centrifugal pump with the discharge valves closed",
+        "what's wrong with using a bypass valve to control flow",
+        "what should the piping look like right before the pump inlet",
+        "what are wear rings for",
+        "how can I tell if a pump is oversized",
+        "which type of adjustable speed drive is most common",
+        "why does the fluid boil inside the pump",
+        "what is static head",
+        "what do the affinity laws describe",
+        "how do I know if a bearing is worn",
+        "where did Sagar study"
+      ]
+    },
+    {
+      "strategy": "fixed",
+      "mode": "dense",
+      "hit@1": 0.43478260869565216,
+      "hit@3": 0.6521739130434783,
+      "mrr@3": 0.5289855072463768,
+      "chunks": 473,
+      "avg_words": 119.7463002114165,
+      "max_words": 120,
+      "truncated_pct": 0.0,
+      "ctx_words": 355.30434782608694,
+      "build_s": 12.8,
+      "misses": [
+        "how much leakage is okay on the pump packing",
+        "how often do the pump bearings need lubricating",
+        "how far can we trim down an impeller",
+        "what is a pony pump used for",
+        "how do I check the mechanical seal during maintenance",
+        "why does running at low flow damage the impeller",
+        "what's wrong with using a bypass valve to control flow",
+        "what should the piping look like right before the pump inlet"
+      ]
+    },
+    {
+      "strategy": "fixed",
+      "mode": "hybrid",
+      "hit@1": 0.391304347826087,
+      "hit@3": 0.8260869565217391,
+      "mrr@3": 0.5942028985507246,
+      "chunks": 473,
+      "avg_words": 119.7463002114165,
+      "max_words": 120,
+      "truncated_pct": 0.0,
+      "ctx_words": 355.30434782608694,
+      "build_s": 12.8,
+      "misses": [
+        "how much leakage is okay on the pump packing",
+        "how far can we trim down an impeller",
+        "what's wrong with using a bypass valve to control flow",
+        "what should the piping look like right before the pump inlet"
+      ]
+    },
+    {
+      "strategy": "sentence",
+      "mode": "dense",
+      "hit@1": 0.5217391304347826,
+      "hit@3": 0.6521739130434783,
+      "mrr@3": 0.572463768115942,
+      "chunks": 872,
+      "avg_words": 71.81192660550458,
+      "max_words": 195,
+      "truncated_pct": 0.34403669724770647,
+      "ctx_words": 212.2608695652174,
+      "build_s": 12.9,
+      "misses": [
+        "what is a pony pump used for",
+        "how do I check the mechanical seal during maintenance",
+        "why does running at low flow damage the impeller",
+        "should I start the centrifugal pump with the discharge valves closed",
+        "what's wrong with using a bypass valve to control flow",
+        "what should the piping look like right before the pump inlet",
+        "which type of adjustable speed drive is most common",
+        "what is static head"
+      ]
+    },
+    {
+      "strategy": "sentence",
+      "mode": "hybrid",
+      "hit@1": 0.43478260869565216,
+      "hit@3": 0.6956521739130435,
+      "mrr@3": 0.5507246376811594,
+      "chunks": 872,
+      "avg_words": 71.81192660550458,
+      "max_words": 195,
+      "truncated_pct": 0.34403669724770647,
+      "ctx_words": 212.65217391304347,
+      "build_s": 12.9,
+      "misses": [
+        "how far can we trim down an impeller",
+        "what is a pony pump used for",
+        "how do I check the mechanical seal during maintenance",
+        "why does running at low flow damage the impeller",
+        "what's wrong with using a bypass valve to control flow",
+        "what are wear rings for",
+        "how can I tell if a pump is oversized"
+      ]
+    },
+    {
+      "strategy": "recursive",
+      "mode": "dense",
+      "hit@1": 0.391304347826087,
+      "hit@3": 0.8260869565217391,
+      "mrr@3": 0.5652173913043478,
+      "chunks": 430,
+      "avg_words": 109.81395348837209,
+      "max_words": 160,
+      "truncated_pct": 0.9302325581395349,
+      "ctx_words": 323.04347826086956,
+      "build_s": 10.0,
+      "misses": [
+        "what is a pony pump used for",
+        "how do I check the mechanical seal during maintenance",
+        "why does running at low flow damage the impeller",
+        "what should the piping look like right before the pump inlet"
+      ]
+    },
+    {
+      "strategy": "recursive",
+      "mode": "hybrid",
+      "hit@1": 0.30434782608695654,
+      "hit@3": 0.8695652173913043,
+      "mrr@3": 0.5579710144927537,
+      "chunks": 430,
+      "avg_words": 109.81395348837209,
+      "max_words": 160,
+      "truncated_pct": 0.9302325581395349,
+      "ctx_words": 336.9130434782609,
+      "build_s": 10.0,
+      "misses": [
+        "what is a pony pump used for",
+        "what should the piping look like right before the pump inlet",
+        "how can I tell if a pump is oversized"
+      ]
+    },
+    {
+      "strategy": "semantic",
+      "mode": "dense",
+      "hit@1": 0.34782608695652173,
+      "hit@3": 0.6086956521739131,
+      "mrr@3": 0.46376811594202894,
+      "chunks": 655,
+      "avg_words": 72.09160305343511,
+      "max_words": 160,
+      "truncated_pct": 0.9160305343511451,
+      "ctx_words": 253.65217391304347,
+      "build_s": 20.5,
+      "misses": [
+        "what is a pony pump used for",
+        "how do I check the mechanical seal during maintenance",
+        "why does running at low flow damage the impeller",
+        "what is the best efficiency point of a pump",
+        "should I start the centrifugal pump with the discharge valves closed",
+        "what should the piping look like right before the pump inlet",
+        "how can I tell if a pump is oversized",
+        "which type of adjustable speed drive is most common",
+        "where did Sagar study"
+      ]
+    },
+    {
+      "strategy": "semantic",
+      "mode": "hybrid",
+      "hit@1": 0.391304347826087,
+      "hit@3": 0.6086956521739131,
+      "mrr@3": 0.4927536231884058,
+      "chunks": 655,
+      "avg_words": 72.09160305343511,
+      "max_words": 160,
+      "truncated_pct": 0.9160305343511451,
+      "ctx_words": 288.60869565217394,
+      "build_s": 20.5,
+      "misses": [
+        "how often do the pump bearings need lubricating",
+        "how far can we trim down an impeller",
+        "what is a pony pump used for",
+        "how do I check the mechanical seal during maintenance",
+        "why does running at low flow damage the impeller",
+        "what should the piping look like right before the pump inlet",
+        "how can I tell if a pump is oversized",
+        "which type of adjustable speed drive is most common",
+        "where did Sagar study"
+      ]
+    },
+    {
+      "strategy": "section",
+      "mode": "dense",
+      "hit@1": 0.391304347826087,
+      "hit@3": 0.6956521739130435,
+      "mrr@3": 0.5217391304347826,
+      "chunks": 462,
+      "avg_words": 111.03679653679653,
+      "max_words": 160,
+      "truncated_pct": 0.8658008658008658,
+      "ctx_words": 332.2173913043478,
+      "build_s": 9.7,
+      "misses": [
+        "how much leakage is okay on the pump packing",
+        "how far can we trim down an impeller",
+        "what is a pony pump used for",
+        "how do I check the mechanical seal during maintenance",
+        "why does running at low flow damage the impeller",
+        "what should the piping look like right before the pump inlet",
+        "which type of adjustable speed drive is most common"
+      ]
+    },
+    {
+      "strategy": "section",
+      "mode": "hybrid",
+      "hit@1": 0.30434782608695654,
+      "hit@3": 0.8695652173913043,
+      "mrr@3": 0.5289855072463768,
+      "chunks": 462,
+      "avg_words": 111.03679653679653,
+      "max_words": 160,
+      "truncated_pct": 0.8658008658008658,
+      "ctx_words": 345.2173913043478,
+      "build_s": 9.7,
+      "misses": [
+        "how much leakage is okay on the pump packing",
+        "how far can we trim down an impeller",
+        "why does running at low flow damage the impeller"
+      ]
+    }
+  ],
+  "threshold": {
+    "in_scope": [
+      0.6492761373519897,
+      0.7512739896774292,
+      0.5451471209526062,
+      0.5754481554031372,
+      0.6893389225006104,
+      0.7311286926269531,
+      0.7244930267333984,
+      0.5530613660812378,
+      0.6267573833465576,
+      0.5992005467414856,
+      0.7317918539047241,
+      0.594618558883667,
+      0.6795366406440735,
+      0.586628794670105,
+      0.5523951053619385,
+      0.6350535154342651,
+      0.5615228414535522,
+      0.6360899806022644,
+      0.48233431577682495,
+      0.26592326164245605,
+      0.585622251033783,
+      0.40890806913375854,
+      0.21154245734214783
+    ],
+    "out_of_scope": {
+      "what's the weather in Berlin tomorrow": 0.12048255652189255,
+      "how do I reset my email password": 0.14828871190547943,
+      "who won the last football world cup": 0.14494100213050842,
+      "what torque should I use on the gearbox cover bolts": 0.22228625416755676,
+      "how do I bake sourdough bread": 0.13167262077331543,
+      "what is the boiling point of ammonia": 0.29877912998199463,
+      "how do I configure a Siemens S7 PLC": 0.3511391282081604,
+      "tell me a joke": 0.052909333258867264,
+      "what is the capital of France": 0.13795407116413116,
+      "how do I change the oil in my car": 0.29242876172065735,
+      "how many vacation days do I have left": 0.27897876501083374,
+      "what's the wiring colour code for a three phase motor in Germany": 0.3281084895133972
+    },
+    "sweep": [
+      {
+        "threshold": 0.2,
+        "false_refusals": 0,
+        "false_accepts": 6
+      },
+      {
+        "threshold": 0.225,
+        "false_refusals": 1,
+        "false_accepts": 5
+      },
+      {
+        "threshold": 0.25,
+        "false_refusals": 1,
+        "false_accepts": 5
+      },
+      {
+        "threshold": 0.275,
+        "false_refusals": 2,
+        "false_accepts": 5
+      },
+      {
+        "threshold": 0.3,
+        "false_refusals": 2,
+        "false_accepts": 2
+      },
+      {
+        "threshold": 0.325,
+        "false_refusals": 2,
+        "false_accepts": 2
+      },
+      {
+        "threshold": 0.35,
+        "false_refusals": 2,
+        "false_accepts": 1
+      },
+      {
+        "threshold": 0.375,
+        "false_refusals": 2,
+        "false_accepts": 0
+      },
+      {
+        "threshold": 0.4,
+        "false_refusals": 2,
+        "false_accepts": 0
+      },
+      {
+        "threshold": 0.425,
+        "false_refusals": 3,
+        "false_accepts": 0
+      },
+      {
+        "threshold": 0.45,
+        "false_refusals": 3,
+        "false_accepts": 0
+      },
+      {
+        "threshold": 0.475,
+        "false_refusals": 3,
+        "false_accepts": 0
+      },
+      {
+        "threshold": 0.5,
+        "false_refusals": 4,
+        "false_accepts": 0
+      },
+      {
+        "threshold": 0.525,
+        "false_refusals": 4,
+        "false_accepts": 0
+      },
+      {
+        "threshold": 0.55,
+        "false_refusals": 5,
+        "false_accepts": 0
+      },
+      {
+        "threshold": 0.575,
+        "false_refusals": 8,
+        "false_accepts": 0
+      },
+      {
+        "threshold": 0.6,
+        "false_refusals": 13,
+        "false_accepts": 0
+      }
+    ]
+  }
+}
