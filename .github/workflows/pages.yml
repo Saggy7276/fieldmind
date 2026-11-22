@@ -24,15 +24,16 @@ jobs:
       run:
         working-directory: fieldmind-ui
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: fieldmind-ui/package-lock.json
       # npm install, not npm ci: the lock file is written on Windows and lacks the
-      # Linux-only optional packages of Vite's bundler (npm/cli#4828)
-      - run: npm install --no-audit --no-fund
+      # Linux-only optional packages of Vite's bundler (npm/cli#4828).
+      # The CUDA download of onnxruntime-node (used only by scripts/parity.mjs) is skipped.
+      - run: npm install --no-audit --no-fund --onnxruntime-node-install-cuda=skip
       - run: npm run lint
       - name: Build
         run: npm run build
