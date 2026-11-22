@@ -39,6 +39,89 @@ cd fieldmind-ui && npm install && npm run dev
 VITE_API_BASE=http://localhost:8000 npm run dev
 ```
 
+## Recreating it from scratch
+
+Tested with Python 3.12 and Node 22–24. The manual PDF and its Markdown
+conversion are in the repo; the index, models and virtual environment are not,
+and are rebuilt by these steps.
+
+**1. Clone and set up Python**
+
+```bash
+git clone https://github.com/Saggy7276/fieldmind.git
+cd fieldmind
+python -m venv voicebot
+voicebot\Scripts\activate          # Windows
+# source voicebot/bin/activate     # macOS / Linux
+python -m pip install -r requirements.txt
+```
+
+**2. Build the search index** (creates `rag_db/`; the first run downloads the
+MiniLM embedding model, ~90 MB)
+
+```bash
+python build_index.py
+```
+
+To start over from the PDF (for example with a different manual), convert it
+first, then check the Markdown before indexing:
+
+```bash
+python -m rag.ingest knowledge_base/sources/doe_pump_sourcebook.pdf \
+    --title "Improving Pumping System Performance (US DOE, 2006)" \
+    --out knowledge_base/doe_pumping_sourcebook.md
+```
+
+**3. Check it works**
+
+```bash
+python -m pytest tests -q          # 68 unit tests, no models needed
+python -m eval.e2e                 # full eval, ~1 min; expect key fact 21/23, 0 contradictions
+```
+
+The first eval run also downloads the cross-encoder (~80 MB).
+
+**4. Run the voice server**
+
+```bash
+uvicorn fieldmind_optimized:app --host 0.0.0.0 --port 8000
+curl localhost:8000/health
+```
+
+The default extractive mode needs no LLM. For the optional generative mode
+(`FIELDMIND_MODE=generative`), install [Ollama](https://ollama.com), download
+`mistral-7b-instruct-v0.3.Q4_K_M.gguf` from Hugging Face into the project
+folder, and register it under the name the server expects:
+
+```bash
+ollama create fieldmind -f Modelfile
+ollama serve
+```
+
+**5. Run the web app**
+
+```bash
+cd fieldmind-ui
+npm install
+npm run dev                        # in-browser engine at http://localhost:5173
+```
+
+If you changed the manual or rebuilt the index, refresh the web app's copy of it
+first (from the project folder):
+
+```bash
+python deploy/export_web_index.py
+```
+
+**6. Publish your own copy on GitHub Pages**
+
+Push the repo to your GitHub account, then in **Settings → Pages** set
+**Source** to **GitHub Actions**. The workflow in `.github/workflows/pages.yml`
+builds the web app on each push to `main` and publishes it at
+`https://<your-user>.github.io/<repo-name>/` (the path follows the repo name).
+
+## More detail
+
 The Python side (indexing, evaluation, server) is documented in
 [docs/RAG.md](docs/RAG.md). After rebuilding the index, refresh the web app's
 copy with `python deploy/export_web_index.py`; pushing to `main` redeploys the site.
